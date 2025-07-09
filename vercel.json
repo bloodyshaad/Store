@@ -10,20 +10,11 @@
       }
     }
   ],
-  "routes": [
-    {
-      "src": "/api/(.*)",
-      "dest": "/server.js"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/public/$1"
-    }
-  ],
-  "env": {
-    "NODE_ENV": "production"
-  },
   "rewrites": [
+    {
+      "source": "/api/(.*)",
+      "destination": "/server.js"
+    },
     {
       "source": "/",
       "destination": "/public/index.html"
@@ -43,6 +34,10 @@
     {
       "source": "/admin-login",
       "destination": "/public/admin-login.html"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/public/$1"
     }
   ],
   "headers": [
@@ -81,6 +76,9 @@
       ]
     }
   ],
+  "env": {
+    "NODE_ENV": "production"
+  },
   "regions": ["iad1"],
   "installCommand": "npm install",
   "buildCommand": "echo 'No build step required'",
