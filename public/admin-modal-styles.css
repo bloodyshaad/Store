@@ -1,0 +1,63 @@
+/* Store Details Modal Styles */
+.details-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.detail-card {
+    background: rgba(58, 58, 60, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
+    transition: all 0.2s ease;
+}
+
+.detail-card:hover {
+    background: rgba(58, 58, 60, 0.5);
+    transform: translateY(-2px);
+}
+
+.detail-icon {
+    font-size: 2rem;
+    margin-bottom: 12px;
+}
+
+.detail-number {
+    font-size: 1.8rem;
+    font-weight: 600;
+    color: #007AFF;
+    margin-bottom: 4px;
+}
+
+.detail-label {
+    color: #8e8e93;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.store-info-section {
+    background: rgba(58, 58, 60, 0.2);
+    border-radius: 12px;
+    padding: 20px;
+}
+
+.store-info-section h4 {
+    color: #ffffff;
+    margin-bottom: 16px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding-bottom: 8px;
+}
+
+.store-info-section p {
+    margin-bottom: 8px;
+    color: #ffffff;
+}
+
+.store-info-section strong {
+    color: #8e8e93;
+    display: inline-block;
+    min-width: 100px;
+}

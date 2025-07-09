@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Mobile Country Selector Test</title>
+    <link rel="stylesheet" href="auth-styles.css">
+    <link rel="stylesheet" href="auth-styles-mobile.css">
+    <style>
+        .test-container {
+            max-width: 400px;
+            margin: 20px auto;
+            padding: 20px;
+        }
+        .test-info {
+            background: rgba(0, 122, 255, 0.1);
+            border: 1px solid rgba(0, 122, 255, 0.3);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+            color: #007AFF;
+            font-size: 14px;
+        }
+        .device-info {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            padding: 10px;
+            margin-bottom: 20px;
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.7);
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h2 style="text-align: center; color: #fff; margin-bottom: 20px;">📱 Mobile Country Selector Test</h2>
+        
+        <div class="test-info">
+            <strong>Test Instructions:</strong><br>
+            1. Type a country name (e.g., "Sri Lanka", "United States")<br>
+            2. Test touch scrolling in suggestions<br>
+            3. Try keyboard navigation with arrow keys<br>
+            4. Test on different screen orientations
+        </div>
+
+        <div class="device-info" id="deviceInfo">
+            Loading device info...
+        </div>
+
+        <form class="auth-form">
+            <div class="form-group">
+                <label for="country">Country</label>
+                <select id="country" name="country" required>
+                    <option value="">Select your country</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="currency">Currency (Auto-filled)</label>
+                <select id="currency" name="currency" required>
+                    <option value="">Select currency</option>
+                </select>
+            </div>
+
+            <div style="margin-top: 20px; padding: 15px; background: rgba(255, 255, 255, 0.05); border-radius: 8px;">
+                <h4 style="color: #30D158; margin-bottom: 10px;">✅ Mobile Features:</h4>
+                <ul style="color: rgba(255, 255, 255, 0.8); font-size: 14px; line-height: 1.6;">
+                    <li>Touch-optimized suggestions</li>
+                    <li>Smooth scrolling with momentum</li>
+                    <li>Larger touch targets (48px+)</li>
+                    <li>Prevents zoom on input focus</li>
+                    <li>Responsive design for all screen sizes</li>
+                    <li>Landscape orientation support</li>
+                    <li>High DPI display optimization</li>
+                    <li>Accessibility features</li>
+                </ul>
+            </div>
+        </form>
+    </div>
+
+    <script src="countries-currencies.js"></script>
+    <script src="auth.js"></script>
+    <script>
+        // Display device information
+        function updateDeviceInfo() {
+            const info = document.getElementById('deviceInfo');
+            const userAgent = navigator.userAgent;
+            const screenWidth = window.screen.width;
+            const screenHeight = window.screen.height;
+            const viewportWidth = window.innerWidth;
+            const viewportHeight = window.innerHeight;
+            const pixelRatio = window.devicePixelRatio || 1;
+            const orientation = screen.orientation ? screen.orientation.type : 'unknown';
+            
+            let deviceType = 'Desktop';
+            if (/Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(userAgent)) {
+                deviceType = 'Mobile/Tablet';
+            }
+            
+            info.innerHTML = `
+                <strong>Device Info:</strong><br>
+                Type: ${deviceType}<br>
+                Screen: ${screenWidth}×${screenHeight}<br>
+                Viewport: ${viewportWidth}×${viewportHeight}<br>
+                Pixel Ratio: ${pixelRatio}<br>
+                Orientation: ${orientation}
+            `;
+        }
+
+        // Update device info on load and orientation change
+        updateDeviceInfo();
+        window.addEventListener('orientationchange', () => {
+            setTimeout(updateDeviceInfo, 100);
+        });
+        window.addEventListener('resize', updateDeviceInfo);
+
+        // Test the country selector
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize the country selector
+            const countrySelect = document.getElementById('country');
+            const currencySelect = document.getElementById('currency');
+            
+            if (countrySelect && currencySelect) {
+                // Populate currencies
+                const currencies = getAllCurrencies();
+                currencies.forEach(currency => {
+                    const currencyInfo = COUNTRIES_CURRENCIES.find(item => item.currency === currency);
+                    const option = document.createElement('option');
+                    option.value = currency;
+                    option.textContent = `${currency} - ${currencyInfo.name}`;
+                    currencySelect.appendChild(option);
+                });
+                
+                // Make currency field read-only
+                currencySelect.disabled = true;
+                currencySelect.style.opacity = '0.7';
+                currencySelect.style.cursor = 'not-allowed';
+                
+                // Create enhanced country input
+                createEnhancedCountryInput(countrySelect);
+            }
+        });
+    </script>
+</body>
+</html>

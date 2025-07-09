@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grocery Store Management System</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="auth.js"></script>
+    <script src="currency-utils.js"></script>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <div class="store-info">
+                    <h1>🛒 <span id="store-name">Grocery Store Management</span></h1>
+                    <p class="owner-info">Welcome, <span id="owner-name">Store Owner</span></p>
+                </div>
+                <button id="logout-btn" class="btn btn-secondary logout-btn">Logout</button>
+            </div>
+            <nav class="nav-tabs">
+                <button class="tab-btn active" data-tab="pos">Point of Sale</button>
+                <button class="tab-btn" data-tab="items">Items</button>
+                <button class="tab-btn" data-tab="customers">Customers</button>
+                <button class="tab-btn" data-tab="transactions">Transactions</button>
+                <button class="tab-btn" data-tab="credits">Credit Management</button>
+                <button class="tab-btn" data-tab="returns">Returns</button>
+                <button class="tab-btn" data-tab="analytics">Analytics</button>
+            </nav>
+        </header>
+
+        <!-- Point of Sale Tab -->
+        <div id="pos" class="tab-content active">
+            <div class="pos-container">
+                <div class="pos-left">
+                    <h2>Point of Sale</h2>
+                    
+                    <!-- Customer Selection -->
+                    <div class="form-group">
+                        <label>Customer (Optional for Cash):</label>
+                        <select id="pos-customer">
+                            <option value="">Walk-in Customer</option>
+                        </select>
+                    </div>
+
+                    <!-- Item Search -->
+                    <div class="form-group">
+                        <label>Search Item:</label>
+                        <input type="text" id="item-search" placeholder="Search by name or barcode">
+                        <div id="item-suggestions" class="suggestions"></div>
+                    </div>
+
+                    <!-- Cart -->
+                    <div class="cart">
+                        <h3>Shopping Cart</h3>
+                        <div id="cart-items"></div>
+                        <div class="cart-total">
+                            <strong>Total: $<span id="cart-total">0.00</span></strong>
+                        </div>
+                    </div>
+
+                    <!-- Payment -->
+                    <div class="payment-section">
+                        <div class="form-group">
+                            <label>Payment Type:</label>
+                            <select id="payment-type">
+                                <option value="cash">Cash</option>
+                                <option value="credit">Credit</option>
+                            </select>
+                        </div>
+                        <div class="form-group" id="credit-due-date-group" style="display: none;">
+                            <label>Credit Due Date:</label>
+                            <input type="date" id="credit-due-date" min="">
+                        </div>
+                        <button id="complete-sale" class="btn btn-primary">Complete Sale</button>
+                        <button id="clear-cart" class="btn btn-secondary">Clear Cart</button>
+                    </div>
+                </div>
+
+                <div class="pos-right">
+                    <h3>Recent Transactions</h3>
+                    <div id="recent-transactions"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Items Tab -->
+        <div id="items" class="tab-content">
+            <div class="section-header">
+                <h2>Items Management</h2>
+                <button id="add-item-btn" class="btn btn-primary">Add New Item</button>
+            </div>
+            
+            <div id="items-list" class="data-table"></div>
+        </div>
+
+        <!-- Customers Tab -->
+        <div id="customers" class="tab-content">
+            <div class="section-header">
+                <h2>Customers Management</h2>
+                <button id="add-customer-btn" class="btn btn-primary">Add New Customer</button>
+            </div>
+            
+            <div id="customers-list" class="data-table"></div>
+        </div>
+
+        <!-- Transactions Tab -->
+        <div id="transactions" class="tab-content">
+            <h2>Transaction History</h2>
+            <div id="transactions-list" class="data-table"></div>
+        </div>
+
+        <!-- Credit Management Tab -->
+        <div id="credits" class="tab-content">
+            <div class="section-header">
+                <h2>Credit Management</h2>
+                <div class="credit-alerts" id="credit-alerts">
+                    <!-- Alerts will be displayed here -->
+                </div>
+            </div>
+            
+            <div class="credit-tabs">
+                <button class="credit-tab-btn active" data-credit-tab="pending">Pending Credits</button>
+                <button class="credit-tab-btn" data-credit-tab="overdue">Overdue Credits</button>
+                <button class="credit-tab-btn" data-credit-tab="paid">Paid Credits</button>
+            </div>
+            
+            <div id="pending-credits" class="credit-tab-content active">
+                <div id="pending-credits-list" class="data-table"></div>
+            </div>
+            
+            <div id="overdue-credits" class="credit-tab-content">
+                <div id="overdue-credits-list" class="data-table"></div>
+            </div>
+            
+            <div id="paid-credits" class="credit-tab-content">
+                <div id="paid-credits-list" class="data-table"></div>
+            </div>
+        </div>
+
+        <!-- Returns Tab -->
+        <div id="returns" class="tab-content">
+            <div class="section-header">
+                <h2>Returns Management</h2>
+                <button id="process-return-btn" class="btn btn-primary">Process Return</button>
+            </div>
+            
+            <div id="returns-list" class="data-table"></div>
+        </div>
+
+        <!-- Analytics Tab -->
+        <div id="analytics" class="tab-content">
+            <h2>Store Analytics</h2>
+            
+            <div class="analytics-grid">
+                <div class="analytics-card">
+                    <h3>Daily Income</h3>
+                    <canvas id="income-chart"></canvas>
+                </div>
+                
+                <div class="analytics-card">
+                    <h3>Profit Analysis</h3>
+                    <canvas id="profit-chart"></canvas>
+                </div>
+                
+                <div class="analytics-card">
+                    <h3>Summary</h3>
+                    <div id="analytics-summary"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Global Modals -->
+    <!-- Add Item Modal -->
+    <div id="item-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h3 id="item-modal-title">Add New Item</h3>
+            <form id="item-form">
+                <div class="form-group">
+                    <label>Name:</label>
+                    <input type="text" id="item-name" required>
+                </div>
+                <div class="form-group">
+                    <label>Barcode:</label>
+                    <input type="text" id="item-barcode">
+                </div>
+                <div class="form-group">
+                    <label>Price:</label>
+                    <input type="number" id="item-price" step="0.01" required>
+                </div>
+                <div class="form-group">
+                    <label>Cost:</label>
+                    <input type="number" id="item-cost" step="0.01" required>
+                </div>
+                <div class="form-group">
+                    <label>Stock:</label>
+                    <input type="number" id="item-stock" required>
+                </div>
+                <div class="form-group">
+                    <label>Category:</label>
+                    <input type="text" id="item-category">
+                </div>
+                <button type="submit" class="btn btn-primary">Save Item</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Add Customer Modal -->
+    <div id="customer-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h3>Add New Customer</h3>
+            <form id="customer-form">
+                <div class="form-group">
+                    <label>Name:</label>
+                    <input type="text" id="customer-name" required>
+                </div>
+                <div class="form-group">
+                    <label>Phone:</label>
+                    <input type="text" id="customer-phone">
+                </div>
+                <div class="form-group">
+                    <label>Email:</label>
+                    <input type="email" id="customer-email">
+                </div>
+                <div class="form-group">
+                    <label>Address:</label>
+                    <textarea id="customer-address"></textarea>
+                </div>
+                                <button type="submit" class="btn btn-primary">Save Customer</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Process Return Modal -->
+    <div id="return-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h3>Process Return</h3>
+            <form id="return-form">
+                <div class="form-group">
+                    <label>Transaction ID:</label>
+                    <input type="text" id="return-transaction-id" required placeholder="Enter receipt/transaction ID">
+                </div>
+                <div class="form-group">
+                    <label>Reason:</label>
+                    <textarea id="return-reason" placeholder="Reason for return"></textarea>
+                </div>
+                <div id="return-items-container">
+                    <h4>Items to Return:</h4>
+                    <div id="return-items-list"></div>
+                </div>
+                <button type="submit" class="btn btn-primary">Process Return</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Transaction Details Modal -->
+    <div id="transaction-details-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h3>Transaction Details</h3>
+            <div id="transaction-details-content">
+                <!-- Transaction details will be populated here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Mark Credit as Paid Modal -->
+    <div id="mark-paid-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h3>Mark Credit as Paid</h3>
+            <form id="mark-paid-form">
+                <div class="form-group">
+                    <label>Transaction ID:</label>
+                    <input type="text" id="paid-transaction-id" readonly>
+                </div>
+                <div class="form-group">
+                    <label>Customer:</label>
+                    <input type="text" id="paid-customer-name" readonly>
+                </div>
+                <div class="form-group">
+                    <label>Amount:</label>
+                    <input type="text" id="paid-amount" readonly>
+                </div>
+                <div class="form-group">
+                    <label>Payment Date:</label>
+                    <input type="date" id="payment-date" required>
+                </div>
+                <div class="form-group">
+                    <label>Payment Method:</label>
+                    <select id="payment-method" required>
+                        <option value="">Select payment method</option>
+                        <option value="cash">Cash</option>
+                        <option value="bank_transfer">Bank Transfer</option>
+                        <option value="check">Check</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Notes (Optional):</label>
+                    <textarea id="payment-notes" placeholder="Additional notes about the payment"></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">Mark as Paid</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

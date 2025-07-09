@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Store Owner Login - Grocery Management</title>
+    <link rel="stylesheet" href="auth-styles.css">
+</head>
+<body>
+    <div class="auth-container">
+        <div class="auth-card">
+            <div class="auth-header">
+                <h1>🛒</h1>
+                <h2>Store Owner Login</h2>
+                <p>Access your grocery store management system</p>
+            </div>
+
+            <form id="login-form" class="auth-form">
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input type="email" id="email" name="email" required placeholder="Enter your email">
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" required placeholder="Enter your password">
+                </div>
+
+                <button type="submit" class="btn btn-primary">
+                    <span class="btn-text">Sign In</span>
+                    <div class="loading" style="display: none;"></div>
+                </button>
+
+                <div class="auth-links">
+                    <p>Don't have a store account? <a href="signup.html">Create Store Account</a></p>
+                    <p><a href="terms.html" target="_blank">Terms of Service</a> | <a href="privacy.html" target="_blank">Privacy Policy</a></p>
+                </div>
+            </form>
+
+            <div id="error-message" class="message error" style="display: none;"></div>
+        </div>
+    </div>
+
+    <script src="auth.js"></script>
+</body>
+</html>

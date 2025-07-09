@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login - Grocery Store Management</title>
+    <link rel="stylesheet" href="auth-styles.css">
+    <style>
+        .admin-header {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+        
+        .admin-header h1 {
+            color: #FF3B30;
+            font-size: 2rem;
+            margin-bottom: 8px;
+        }
+        
+        .admin-header p {
+            color: #8e8e93;
+            font-size: 14px;
+        }
+        
+        .admin-badge {
+            background: linear-gradient(135deg, #FF3B30, #FF9500);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            display: inline-block;
+            margin-bottom: 16px;
+        }
+    </style>
+</head>
+<body>
+    <div class="auth-container">
+        <div class="auth-card">
+            <div class="admin-header">
+                <div class="admin-badge">ADMIN ACCESS</div>
+                <h1>🔐 System Administrator</h1>
+                <p>Restricted access - Authorized personnel only</p>
+            </div>
+
+            <form id="admin-login-form" class="auth-form">
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" name="username" required placeholder="Enter admin username">
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" required placeholder="Enter admin password">
+                </div>
+
+                <button type="submit" class="btn btn-primary">
+                    <span class="btn-text">Access Admin Panel</span>
+                    <div class="loading" style="display: none;"></div>
+                </button>
+
+                <div class="auth-links">
+                    <p><a href="login.html">← Back to Store Login</a></p>
+                </div>
+            </form>
+
+            <div id="error-message" class="message error" style="display: none;"></div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('admin-login-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const errorDiv = document.getElementById('error-message');
+            const submitBtn = e.target.querySelector('button[type="submit"]');
+            const btnText = submitBtn.querySelector('.btn-text');
+            const loading = submitBtn.querySelector('.loading');
+            
+            // Show loading state
+            btnText.style.display = 'none';
+            loading.style.display = 'block';
+            submitBtn.disabled = true;
+            errorDiv.style.display = 'none';
+            
+            try {
+                const response = await fetch('/api/admin/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    // Store admin token
+                    localStorage.setItem('adminToken', data.token);
+                    localStorage.setItem('adminUser', data.admin.username);
+                    
+                    // Redirect to admin panel
+                    window.location.href = 'admin.html';
+                } else {
+                    throw new Error(data.error || 'Login failed');
+                }
+            } catch (error) {
+                errorDiv.textContent = error.message;
+                errorDiv.style.display = 'block';
+            } finally {
+                // Reset loading state
+                btnText.style.display = 'block';
+                loading.style.display = 'none';
+                submitBtn.disabled = false;
+            }
+        });
+    </script>
+</body>
+</html>
