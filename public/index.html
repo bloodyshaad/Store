@@ -200,9 +200,28 @@
                     <label>Stock:</label>
                     <input type="number" id="item-stock" required>
                 </div>
-                <div class="form-group">
-                    <label>Category:</label>
-                    <input type="text" id="item-category">
+                
+                <!-- Financial Metrics Display -->
+                <div class="financial-metrics">
+                    <h4>Current Store Performance</h4>
+                    <div class="metrics-grid">
+                        <div class="metric-item">
+                            <span class="metric-label">Total Income:</span>
+                            <span class="metric-value" id="metric-income">$0.00</span>
+                        </div>
+                        <div class="metric-item">
+                            <span class="metric-label">Total Profit:</span>
+                            <span class="metric-value" id="metric-profit">$0.00</span>
+                        </div>
+                        <div class="metric-item">
+                            <span class="metric-label">Total Transactions:</span>
+                            <span class="metric-value" id="metric-transactions">0</span>
+                        </div>
+                        <div class="metric-item">
+                            <span class="metric-label">Avg Transaction Value:</span>
+                            <span class="metric-value" id="metric-avg-transaction">$0.00</span>
+                        </div>
+                    </div>
                 </div>
                 <button type="submit" class="btn btn-primary">Save Item</button>
             </form>

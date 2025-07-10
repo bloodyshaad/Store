@@ -59,7 +59,12 @@ function authenticatedFetch(url, options = {}) {
     const token = getAuthToken();
     const storeId = getStoreId();
     
+    console.log('Making authenticated request to:', url);
+    console.log('Token exists:', !!token);
+    console.log('Store ID:', storeId);
+    
     if (!token) {
+        console.error('No auth token found, redirecting to login');
         window.location.href = 'login.html';
         return Promise.reject('No auth token');
     }
@@ -70,9 +75,21 @@ function authenticatedFetch(url, options = {}) {
         ...options.headers
     };
     
+    console.log('Request headers:', headers);
+    
     return fetch(url, {
         ...options,
         headers
+    }).then(response => {
+        console.log('Response status:', response.status);
+        console.log('Response ok:', response.ok);
+        if (!response.ok) {
+            console.error('Response error:', response.statusText);
+        }
+        return response;
+    }).catch(error => {
+        console.error('Fetch error:', error);
+        throw error;
     });
 }
 
@@ -160,6 +177,8 @@ function initializeModals() {
         currentEditingItem = null;
         document.getElementById('item-modal-title').textContent = 'Add New Item';
         document.getElementById('item-form').reset();
+        // Load financial metrics when opening the modal
+        loadFinancialMetrics();
         document.getElementById('item-modal').style.display = 'block';
     });
 
@@ -219,7 +238,7 @@ function initializePOS() {
         );
         
         suggestions.innerHTML = filteredItems.map(item => 
-            `<div class="suggestion-item" onclick="addToCart(${item.id})">
+            `<div class="suggestion-item" onclick="addToCart('${item.id}')">
                 ${item.name} - ${formatCurrency(item.price)} (Stock: ${item.stock})
             </div>`
         ).join('');
@@ -242,7 +261,6 @@ async function loadItems() {
         // Ensure we have an array
         items = Array.isArray(data) ? data : [];
         displayItems();
-        updatePOSCustomers();
     } catch (error) {
         console.error('Error loading items:', error);
         items = []; // Set to empty array on error
@@ -268,21 +286,18 @@ function displayItems() {
                     <th>Price</th>
                     <th>Cost</th>
                     <th>Stock</th>
-                    <th>Category</th>
                     <th>Actions</th>
-                </tr>
             </thead>
             <tbody>
                 ${items.map(item => `
                     <tr>
-                        <td>${item.name}</td>
+                        <td>${item.name || ''}</td>
                         <td>${item.barcode || 'N/A'}</td>
                         <td>${formatCurrency(item.price)}</td>
                         <td>${formatCurrency(item.cost)}</td>
                         <td>${item.stock}</td>
-                        <td>${item.category || 'N/A'}</td>
                         <td>
-                            <button class="btn btn-secondary" onclick="editItem(${item.id})">Edit</button>
+                            <button class="btn btn-secondary" onclick="editItem('${item.id}')">Edit</button>
                         </td>
                     </tr>
                 `).join('')}
@@ -304,7 +319,8 @@ function editItem(id) {
     document.getElementById('item-price').value = item.price;
     document.getElementById('item-cost').value = item.cost;
     document.getElementById('item-stock').value = item.stock;
-    document.getElementById('item-category').value = item.category || '';
+    // Load financial metrics when opening the modal
+    loadFinancialMetrics();
     document.getElementById('item-modal').style.display = 'block';
 }
 
@@ -316,8 +332,7 @@ async function handleItemSubmit(e) {
         barcode: document.getElementById('item-barcode').value,
         price: parseFloat(document.getElementById('item-price').value),
         cost: parseFloat(document.getElementById('item-cost').value),
-        stock: parseInt(document.getElementById('item-stock').value),
-        category: document.getElementById('item-category').value
+        stock: parseInt(document.getElementById('item-stock').value)
     };
     
     try {
@@ -521,11 +536,11 @@ function updateCartDisplay() {
                     ${formatCurrency(item.unit_price)} each
                 </div>
                 <div class="quantity-controls">
-                    <button class="quantity-btn" onclick="updateCartQuantity(${item.item_id}, ${item.quantity - 1})">-</button>
+                    <button class="quantity-btn" onclick="updateCartQuantity('${item.item_id}', ${item.quantity - 1})">-</button>
                     <input type="number" class="quantity-input" value="${item.quantity}" 
-                           onchange="updateCartQuantity(${item.item_id}, parseInt(this.value))" min="1">
-                    <button class="quantity-btn" onclick="updateCartQuantity(${item.item_id}, ${item.quantity + 1})">+</button>
-                    <button class="btn btn-danger" onclick="removeFromCart(${item.item_id})">Remove</button>
+                           onchange="updateCartQuantity('${item.item_id}', parseInt(this.value))" min="1">
+                    <button class="quantity-btn" onclick="updateCartQuantity('${item.item_id}', ${item.quantity + 1})">+</button>
+                    <button class="btn btn-danger" onclick="removeFromCart('${item.item_id}')">Remove</button>
                 </div>
                 <div>${formatCurrency(itemTotal)}</div>
             </div>
@@ -581,6 +596,10 @@ async function completeSale() {
             loadItems(); // Refresh stock
             loadCustomers(); // Refresh customer balances
             loadRecentTransactions();
+            // Update financial metrics in real-time after each transaction
+            if (document.getElementById("metric-income")) {
+                loadFinancialMetrics();
+            }
             
             // Reset payment type to cash and hide credit due date
             document.getElementById('payment-type').value = 'cash';
@@ -688,15 +707,14 @@ async function viewTransactionDetails(transactionId) {
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
-        const details = await response.json();
+        const transaction = await response.json();
         
-        if (details.length > 0) {
-            const transaction = details[0];
-            const items = details.map(d => ({
-                name: d.item_name,
-                quantity: d.quantity,
-                unit_price: d.unit_price,
-                total_price: d.total_price
+        if (transaction && transaction.transaction_items) {
+            const items = transaction.transaction_items.map(item => ({
+                name: item.items.name,
+                quantity: item.quantity,
+                unit_price: item.unit_price,
+                total_price: item.total_price
             }));
             
             // Populate the modal with transaction details
@@ -709,7 +727,7 @@ async function viewTransactionDetails(transactionId) {
                     </div>
                     <div class="form-group">
                         <label>Customer:</label>
-                        <p>${transaction.customer_name || 'Walk-in Customer'}</p>
+                        <p>${transaction.customers?.name || 'Walk-in Customer'}</p>
                     </div>
                     <div class="form-group">
                         <label>Total Amount:</label>
@@ -875,8 +893,8 @@ async function handleReturnSubmit(e) {
 async function loadAnalytics() {
     try {
         const [incomeResponse, profitResponse] = await Promise.all([
-            authenticatedFetch('/api/analytics/income'),
-            authenticatedFetch('/api/analytics/profit')
+            authenticatedFetch("/api/analytics/income"),
+            authenticatedFetch("/api/analytics/profit")
         ]);
         
         if (!incomeResponse.ok || !profitResponse.ok) {
@@ -1299,6 +1317,60 @@ async function handleMarkAsPaid(e) {
     }
 }
 
+// Financial Metrics for Add Item Modal
+async function loadFinancialMetrics() {
+    try {
+        // Get all transactions to calculate real-time metrics
+        const transactionsResponse = await authenticatedFetch("/api/transactions");
+        
+        if (!transactionsResponse.ok) {
+            throw new Error("Failed to load financial metrics data");
+        }
+        
+        const transactions = await transactionsResponse.json();
+        const transactionData = Array.isArray(transactions) ? transactions : [];
+        
+        // Calculate real-time metrics from all transactions
+        let totalIncome = 0;
+        let totalProfit = 0;
+        let totalTransactions = transactionData.length;
+        
+        // Calculate total income and profit from all transactions
+        for (const transaction of transactionData) {
+            totalIncome += transaction.total_amount || 0;
+            // Simplified profit calculation - 30% margin estimate
+            totalProfit += (transaction.total_amount || 0) * 0.3;
+        }
+        
+        // Calculate average transaction value
+        const avgTransactionValue = totalTransactions > 0 ? totalIncome / totalTransactions : 0;
+        
+        // Update the metrics display with real-time data
+        const metricIncome = document.getElementById("metric-income");
+        const metricProfit = document.getElementById("metric-profit");
+        const metricTransactions = document.getElementById("metric-transactions");
+        const metricAvgTransaction = document.getElementById("metric-avg-transaction");
+        
+        if (metricIncome) metricIncome.textContent = formatCurrency(totalIncome);
+        if (metricProfit) metricProfit.textContent = formatCurrency(totalProfit);
+        if (metricTransactions) metricTransactions.textContent = totalTransactions.toString();
+        if (metricAvgTransaction) metricAvgTransaction.textContent = formatCurrency(avgTransactionValue);
+        
+    } catch (error) {
+        console.error("Error loading financial metrics:", error);
+        // Set default values on error
+        const metricIncome = document.getElementById("metric-income");
+        const metricProfit = document.getElementById("metric-profit");
+        const metricTransactions = document.getElementById("metric-transactions");
+        const metricAvgTransaction = document.getElementById("metric-avg-transaction");
+        
+        if (metricIncome) metricIncome.textContent = "$0.00";
+        if (metricProfit) metricProfit.textContent = "$0.00";
+        if (metricTransactions) metricTransactions.textContent = "0";
+        if (metricAvgTransaction) metricAvgTransaction.textContent = "$0.00";
+    }
+}
+
 // Utility functions
 function showMessage(message, type) {
     const messageDiv = document.createElement('div');
@@ -1310,4 +1382,19 @@ function showMessage(message, type) {
     setTimeout(() => {
         messageDiv.remove();
     }, 5000);
+}
+
+// Fallback currency formatting function (in case currency-utils.js fails to load)
+if (typeof formatCurrency === 'undefined') {
+    function formatCurrency(amount) {
+        const symbol = getStoreCurrencySymbol();
+        return `${symbol}${amount.toFixed(2)}`;
+    }
+}
+
+// Fallback currency symbol function (in case currency-utils.js fails to load)
+if (typeof getStoreCurrencySymbol === 'undefined') {
+    function getStoreCurrencySymbol() {
+        return localStorage.getItem('storeCurrencySymbol') || '$';
+    }
 }

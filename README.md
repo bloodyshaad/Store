@@ -178,12 +178,14 @@ npm run dev  # Uses nodemon for auto-restart
 
 ### Database
 
-The application uses SQLite for data storage:
-- Database file: `grocery_store.db`
-- Automatic table creation on first run
-- Multi-tenant data isolation
+The application uses **Supabase** (PostgreSQL) for data storage:
+- Cloud-hosted PostgreSQL database
+- Automatic scaling and backups
+- Multi-tenant data isolation with Row Level Security (RLS)
+- Real-time capabilities
+- Built-in authentication and authorization
 
-**Note:** SQLite is suitable for development and small deployments. For production with high traffic, consider migrating to PostgreSQL or MySQL.
+**Production Ready:** Supabase provides enterprise-grade PostgreSQL with automatic scaling, making it perfect for production deployments.
 
 ## 🛡️ Security Features
 

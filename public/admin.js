@@ -212,8 +212,8 @@ function displayStores(stores) {
                         <td>${new Date(store.created_at).toLocaleDateString()}</td>
                         <td>
                             <div class="action-buttons">
-                                <button class="btn btn-secondary" onclick="viewStoreDetails(${store.store_id})">View Details</button>
-                                <button class="btn btn-danger" onclick="confirmDeleteStore(${store.store_id}, '${store.store_name}')">Delete Store</button>
+                                <button class="btn btn-secondary" onclick="viewStoreDetails('${store.store_id}')">View Details</button>
+                                <button class="btn btn-danger" onclick="confirmDeleteStore('${store.store_id}', '${store.store_name}')">Delete Store</button>
                             </div>
                         </td>
                     </tr>
@@ -374,7 +374,7 @@ function displayStoreOwners(owners) {
                         <td>${new Date(owner.created_at).toLocaleDateString()}</td>
                         <td>
                             <div class="action-buttons">
-                                <button class="btn btn-danger" onclick="confirmDeleteOwner(${owner.owner_id}, '${owner.owner_name}')">Delete Owner</button>
+                                <button class="btn btn-danger" onclick="confirmDeleteOwner('${owner.owner_id}', '${owner.owner_name}')">Delete Owner</button>
                             </div>
                         </td>
                     </tr>

@@ -828,3 +828,47 @@ body {
     min-height: 80px;
     resize: vertical;
 }
+
+/* Financial Metrics Styles */
+.financial-metrics {
+    background: rgba(58, 58, 60, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 20px;
+    margin: 20px 0;
+}
+
+.financial-metrics h4 {
+    color: #ffffff;
+    margin-bottom: 16px;
+    text-align: center;
+    font-size: 16px;
+}
+
+.metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 12px;
+}
+
+.metric-item {
+    background: rgba(58, 58, 60, 0.2);
+    border-radius: 8px;
+    padding: 12px;
+    text-align: center;
+}
+
+.metric-label {
+    display: block;
+    color: #8e8e93;
+    font-size: 12px;
+    font-weight: 500;
+    margin-bottom: 4px;
+}
+
+.metric-value {
+    display: block;
+    color: #007AFF;
+    font-size: 18px;
+    font-weight: 600;
+}
