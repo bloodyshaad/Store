@@ -10,100 +10,14 @@
       }
     }
   ],
-  "rewrites": [
+  "routes": [
     {
-      "source": "/api/(.*)",
-      "destination": "/server.js"
+      "src": "/api/(.*)",
+      "dest": "/server.js"
     },
     {
-      "source": "/login",
-      "destination": "/public/login.html"
-    },
-    {
-      "source": "/signup",
-      "destination": "/public/signup.html"
-    },
-    {
-      "source": "/admin",
-      "destination": "/public/admin.html"
-    },
-    {
-      "source": "/admin-login",
-      "destination": "/public/admin-login.html"
-    },
-    {
-      "source": "/privacy",
-      "destination": "/public/privacy.html"
-    },
-    {
-      "source": "/terms",
-      "destination": "/public/terms.html"
-    },
-    {
-      "source": "/",
-      "destination": "/public/index.html"
-    },
-    {
-      "source": "/(.*)",
-      "destination": "/public/$1"
-    }
-  ],
-  "headers": [
-    {
-      "source": "/api/(.*)",
-      "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "no-cache, no-store, must-revalidate"
-        },
-        {
-          "key": "Access-Control-Allow-Origin",
-          "value": "*"
-        },
-        {
-          "key": "Access-Control-Allow-Methods",
-          "value": "GET, POST, PUT, DELETE, OPTIONS"
-        },
-        {
-          "key": "Access-Control-Allow-Headers",
-          "value": "Content-Type, Authorization, X-Store-ID, X-Admin-Access"
-        }
-      ]
-    },
-    {
-      "source": "/(.*)\\.(css|js)",
-      "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "public, max-age=31536000, immutable"
-        }
-      ]
-    },
-    {
-      "source": "/(.*)\\.(png|jpg|jpeg|gif|ico|svg)",
-      "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "public, max-age=31536000, immutable"
-        }
-      ]
-    },
-    {
-      "source": "/(.*)",
-      "headers": [
-        {
-          "key": "X-Content-Type-Options",
-          "value": "nosniff"
-        },
-        {
-          "key": "X-Frame-Options",
-          "value": "DENY"
-        },
-        {
-          "key": "X-XSS-Protection",
-          "value": "1; mode=block"
-        }
-      ]
+      "src": "/(.*)",
+      "dest": "/server.js"
     }
   ],
   "env": {
