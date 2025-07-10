@@ -10,42 +10,42 @@
       }
     }
   ],
-  "routes": [
+  "rewrites": [
     {
-      "src": "/api/(.*)",
-      "dest": "/server.js"
+      "source": "/api/(.*)",
+      "destination": "/server.js"
     },
     {
-      "src": "/login",
-      "dest": "/public/login.html"
+      "source": "/login",
+      "destination": "/public/login.html"
     },
     {
-      "src": "/signup",
-      "dest": "/public/signup.html"
+      "source": "/signup",
+      "destination": "/public/signup.html"
     },
     {
-      "src": "/admin",
-      "dest": "/public/admin.html"
+      "source": "/admin",
+      "destination": "/public/admin.html"
     },
     {
-      "src": "/admin-login",
-      "dest": "/public/admin-login.html"
+      "source": "/admin-login",
+      "destination": "/public/admin-login.html"
     },
     {
-      "src": "/privacy",
-      "dest": "/public/privacy.html"
+      "source": "/privacy",
+      "destination": "/public/privacy.html"
     },
     {
-      "src": "/terms",
-      "dest": "/public/terms.html"
+      "source": "/terms",
+      "destination": "/public/terms.html"
     },
     {
-      "src": "/",
-      "dest": "/public/index.html"
+      "source": "/",
+      "destination": "/public/index.html"
     },
     {
-      "src": "/(.*)",
-      "dest": "/public/$1"
+      "source": "/(.*)",
+      "destination": "/public/$1"
     }
   ],
   "headers": [
